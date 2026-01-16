@@ -163,4 +163,6 @@ python network_mapper.py
 5. Monitor interface traffic using the Plotly charts and JSON stats.
 
 ---
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/21ac1e16-0876-4213-95d7-78b926500a80" />
+
 

@@ -1,166 +1,166 @@
 # dynamic-network-topology-visualizer
 A full-stack network topology discovery and visualization system that polls SNMP-enabled routers and switches using Go, models network nodes and edges as a graph, exposes topology data through a GraphQL API, and renders a live, interactive network map in the browser using D3.js.
-
-Perfect — now that I can **see the actual files and code style**, I’ll give you a **README that is inspired by what this project really does**, not a generic one.
-This will **match the Python SNMP + JSON + D3 frontend workflow** you’re using and still align with *Dynamic Network Topology Visualization*.
-
-You can **directly paste this as README.md**.
+Absolutely! Let’s make this README more **friendly, modern, and visually engaging** by adding emojis, highlighting key sections, and keeping it detailed but approachable. Here’s a polished version:
 
 ---
 
-# Dynamic Network Topology Visualization
+## ✨ Features
 
-This repository contains a network monitoring and visualization system that collects interface statistics from SNMP-enabled devices, processes and stores the data in JSON format, and visualizes network topology and traffic statistics using scalable SVG and D3.js-based frontend experiments.
+1. **📡 Dynamic SNMP Data Collection**
 
-The project focuses on **practical network data collection, processing, and visualization**, combining backend scripts with frontend graph rendering techniques.
+   * Supports SNMP v2c and v3 for fetching device information.
+   * Polls individual OIDs, bulk requests, and SNMP tables.
+   * Automatically detects LLDP neighbors to discover device connections.
 
----
+2. **📊 Interface Traffic & Stats Logging**
 
-## 📌 Project Overview
+   * Tracks interface stats (`ifHCInOctets`, `ifHCOutOctets`) for each device interface.
+   * Calculates **In/Out speeds**, bandwidth utilization, and records historical stats.
+   * Handles counter wrap automatically to prevent incorrect readings.
 
-The goal of this project is to **understand and visualize network behavior** by:
+3. **🗂 JSON-Based Graph Generation**
 
-* Collecting interface-level statistics such as input/output octets
-* Computing bandwidth usage and utilization over time
-* Storing time-series data in structured JSON files
-* Rendering network topology and interface statistics using interactive D3.js visualizations
+   * Stores network topology in JSON files: `graph.json`, `interfaces.json`, `interface_stats.json`, `neighborships.json`.
+   * Files are automatically updated and read by the frontend for visualization.
 
-The backend logic simulates or polls SNMP counters, while the frontend reads generated JSON data and displays graphs, links, and topology maps in the browser.
+4. **💻 Interactive Frontend Visualization**
 
----
+   * Uses **D3.js** for force-directed, zoomable, and draggable network diagrams.
+   * Uses **Plotly.js** to display interface traffic charts over time.
+   * Open `full_example_html/index.html` to see your network instantly.
 
-## 🧠 Key Capabilities
+5. **🎨 Customizable Layouts & Optimization**
 
-* Interface traffic monitoring using SNMP-style counters
-* Bandwidth and utilization calculation from octet deltas
-* Time-series data logging in JSON format
-* Frontend experiments for:
+   * Frontend directories like `01_graphics`, `02_graph_optimization`, and `scalable_svg_with_d3_and_force_scale` allow advanced customization.
+   * Supports clickable links, interactive zooming, and hierarchical node layouts.
 
-  * Scalable SVG rendering
-  * Force-directed graphs
-  * Colored links and nodes
-  * Interactive topology exploration
-* Separation of data generation and visualization logic
+6. **🛠 Extensible Backend**
 
----
+   * Python scripts are modular and can be extended for custom SNMP queries or new visualizations.
+   * Key scripts:
 
-## 🛠️ Technologies Used
-
-### Backend / Data Processing
-
-* **Python**
-* **SNMP concepts (ifHCInOctets, ifHCOutOctets, ifSpeed)**
-* **JSON-based data storage**
-* **LLDP / SNMP notes for topology discovery**
-
-### Frontend / Visualization
-
-* **D3.js**
-* **SVG**
-* **HTML, CSS, JavaScript**
-* **Node.js (for local hosting)**
+     * `network_mapper.py` → orchestrates SNMP polling & graph creation
+     * `graph_json_writer.py` → writes JSON for frontend
+     * `quicksnmp.py` → helper SNMP functions
+     * `LLDP-MIB.py` → LLDP neighbor parsing
+     * `TopologyModel.py` → organizes network topology data
 
 ---
 
-## 📂 Repository Structure
+## 📋 Table & Node Definitions
+
+* **SNMP Table OIDs**
+
+  * `sysName_named_oid` → Device hostname
+  * `interfaces_table_named_oid` → Interface details (name, speed, MAC, etc.)
+  * `lldp_table_named_oid` → Neighbor device info
+  * `lldp_local_port_name` → Local interface port
+
+* **Visualization Config**
+
+  * `MAX_STATS_RECORDS = 2016` → Maximum history points for interface stats
+  * `LINK_SPEEDS` → Regex mapping interface names to speeds (e.g., `GigabitEthernet → 1 Gbps`)
+  * `NODE_HIERARCHY` → Regex mapping device names to hierarchical levels (Access, Distribution, Aggregation)
+  * `IGNORED_IFTYPES` → Interfaces ignored in visualization (loopbacks, VLANs)
+
+---
+
+## 📂 Project Structure
 
 ```
-.
-├── FRONTEND_EXPERIMENTS/
-│   ├── scalable_svg/
-│   ├── scalable_svg_with_d3/
-│   ├── scalable_svg_with_d3_and_force_scale/
-│   ├── scalable_svg_with_d3_and_force_scale_and_lines_coloring/
-│   ├── JS_line_chart_from_JSON/
-│   ├── clickable_lines/
-│   └── full_example_html.zip
+dynamic-visualizer/
 │
-├── html/
-│   └── data/
-│       └── interface_stats.json
-│
-├── network_mapper.py        # Core network/interface processing logic
-├── graph_json_writer.py     # JSON graph generation
-├── helpers.py               # Utility functions (logging, helpers)
-├── quicksnmp.py             # SNMP interaction helpers
-├── LLDP-MIB.py              # LLDP-related definitions
-├── pyconfig.py              # Configuration handling
-├── config.ini               # Runtime configuration
-├── SNMP_NOTES               # SNMP and LLDP reference notes
-├── README.md
-└── LICENSE.md
+├─ Classes/                 # Python classes for topology & data handling
+│  └─ TopologyModel.py
+├─ Frontend/                # Frontend visualization code
+│  ├─ 01_graphics/
+│  ├─ 02_graph_optimization/
+│  ├─ clickable_lines/
+│  ├─ CSS_layout/
+│  ├─ JS_line_chart_from_JSON/
+│  ├─ scalable_svg/
+│  ├─ scalable_svg_with_d3/
+│  ├─ scalable_svg_with_d3_and_force_scale/
+│  └─ scalable_svg_with_d3_and_force_scale_and_lines/
+├─ full_example_html/       # Full working HTML example
+│  ├─ data/                 # JSON files for example networks
+│  ├─ index.html
+│  ├─ perf_test.html
+│  ├─ scripts.js
+│  ├─ style.css
+│  ├─ layout.css
+│  └─ background.css
+├─ html/                    # Additional HTML templates
+├─ config/                  # SNMP configuration (`config.ini`)
+├─ pyconfig.py              # Low-level Python settings
+├─ network_mapper.py        # Main SNMP & mapping script
+├─ graph_json_writer.py     # Generates JSON for frontend
+├─ quicksnmp.py             # SNMP helper functions
+├─ LLDP-MIB.py              # LLDP parsing
+└─ helpers.py               # Utility functions (logging, etc.)
 ```
 
 ---
 
-## ⚙️ How the Backend Works
+## 🛠 How It Works
 
-1. Interface counters (`ifHCInOctets`, `ifHCOutOctets`) are collected or simulated
-2. Previous counter values are loaded from `interface_stats.json`
-3. Delta values are calculated using timestamps
-4. Bandwidth (InSpeed / OutSpeed) is computed
-5. Interface utilization is derived using interface speed
-6. New values are appended as time-series stats
-7. Updated JSON is written back for frontend consumption
+1. **⚙️ Configuration**
 
-This allows the frontend to **render historical and live-like graphs** without tightly coupling to the backend logic.
+   * Edit `config/config.ini` with device SNMP details (IP, community, version).
+   * Optional low-level tweaks: `pyconfig.py` (polling intervals, JSON paths, logging).
+
+2. **📡 SNMP Data Collection**
+
+   * `network_mapper.py` polls devices for hostname, interfaces, LLDP neighbors, and counters.
+   * Supports SNMP v2c & v3, including authentication and encryption.
+   * Automatically handles counter wrapping to prevent data errors.
+
+3. **📊 Interface Statistics Logging**
+
+   * Historical statistics are stored in `interface_stats.json`.
+   * Tracks bandwidth utilization, calculates In/Out speeds, and appends new data points.
+
+4. **🌐 Topology & JSON Generation**
+
+   * `TopologyModel.py` organizes devices, links, and interface info.
+   * JSON files are used by frontend for visualization.
+
+5. **💻 Frontend Visualization**
+
+   * Open `full_example_html/index.html` to view network graph.
+   * Interactive features: drag nodes, zoom, hover details, and Plotly traffic charts.
+
+6. **⏱ Automation**
+
+   * Schedule `network_mapper.py` periodically (cron or Task Scheduler).
+   * JSON and visualizations update automatically for real-time monitoring.
 
 ---
 
-## 📊 Frontend Visualization
+## ⚡ Installation
 
-The frontend experiments demonstrate:
+```bash
+# Install required Python libraries
+pip install pysnmp networkx json pprint
 
-* Reading JSON-based network data
-* Rendering scalable SVG graphs
-* Force-directed network layouts
-* Color-coded links based on utilization
-* Clickable and interactive topology elements
-
-Each experiment folder focuses on **one visualization concept**, making the project suitable for learning and extension.
+# Optional for SNMPv3
+pip install pycryptodome
+```
 
 ---
 
-## 🧪 Running the Project
+## 🚀 Usage
 
-### Backend (Data Generation)
+1. Configure devices in `config/config.ini`.
+2. (Optional) Adjust `pyconfig.py` for intervals, JSON paths, or logging.
+3. Run network mapper:
 
 ```bash
 python network_mapper.py
 ```
 
-This generates or updates:
-
-```
-html/data/interface_stats.json
-```
+4. Open `full_example_html/index.html` in your browser to visualize the network.
+5. Monitor interface traffic using the Plotly charts and JSON stats.
 
 ---
-
-### Frontend (Visualization)
-
-You can open the HTML files directly in a browser or host them locally:
-
-```bash
-cd html
-python -m http.server
-```
-
-Then open:
-
-```
-http://localhost:8000
-```
-
----
-
-## 🎯 Use Cases
-
-* Network topology visualization
-* Interface traffic monitoring
-* Learning SNMP counter behavior
-* D3.js graph experimentation
-* Network engineering education and demos
-
-
 
